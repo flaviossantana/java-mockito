@@ -1,7 +1,6 @@
 package br.com.alura.leilao.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +13,26 @@ import br.com.alura.leilao.model.Leilao;
 @Service
 public class FinalizarLeilaoService {
 
-	private final LeilaoDao leiloes;
+	private final LeilaoDao leilaoDao;
+	private final EnviadorDeEmails enviadorDeEmails;
+
 
 	@Autowired
-	public FinalizarLeilaoService(LeilaoDao leiloes) {
-		this.leiloes = leiloes;
+	public FinalizarLeilaoService(LeilaoDao leiloes, EnviadorDeEmails enviadorDeEmails) {
+		this.leilaoDao = leiloes;
+		this.enviadorDeEmails = enviadorDeEmails;
 	}
 
 	public void finalizarLeiloesExpirados() {
-		List<Leilao> expirados = leiloes.buscarLeiloesExpirados();
+		List<Leilao> expirados = leilaoDao.buscarLeiloesExpirados();
 		expirados.forEach(leilao -> {
 			Lance maiorLance = maiorLanceDadoNoLeilao(leilao);
 			leilao.setLanceVencedor(maiorLance);
 			leilao.fechar();
-			leiloes.salvar(leilao);
+			leilaoDao.salvar(leilao);
+
+			enviadorDeEmails.enviarEmailVencedorLeilao(maiorLance);
+
 		});
 	}
 

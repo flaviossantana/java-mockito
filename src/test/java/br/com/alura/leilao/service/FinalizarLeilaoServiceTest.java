@@ -20,12 +20,14 @@ class FinalizarLeilaoServiceTest {
 
     @Mock
     private LeilaoDao leilaoDao;
+    @Mock
+    private EnviadorDeEmails enviadorDeEmails;
     private FinalizarLeilaoService service;
 
     @BeforeEach
     public void beforeEach() {
         MockitoAnnotations.initMocks(this);
-        this.service = new FinalizarLeilaoService(leilaoDao);
+        this.service = new FinalizarLeilaoService(leilaoDao, enviadorDeEmails);
     }
 
     @Test
@@ -52,6 +54,27 @@ class FinalizarLeilaoServiceTest {
 
         Mockito.verify(leilaoDao).salvar(leilao);
 
+    }
+
+    @Test
+    void deveriaEnviarEmailGanhadorDoLeilao() {
+
+        List<Leilao> leiloes = criarLeilaoComLances();
+
+        Mockito.when(this.leilaoDao.buscarLeiloesExpirados())
+                .thenReturn(leiloes);
+
+        this.service.finalizarLeiloesExpirados();
+
+        Optional<Leilao> leilaoOptional = leiloes.stream().findFirst();
+
+        if (!leilaoOptional.isPresent()) {
+            Assertions.fail("Não existe leilão");
+        }
+
+        Leilao leilao = leilaoOptional.get();
+
+        Mockito.verify(enviadorDeEmails).enviarEmailVencedorLeilao(leilao.getLanceVencedor());
     }
 
     private List<Leilao> criarLeilaoComLances() {
