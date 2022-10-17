@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public class LeilaoBuilder {
 
-    private Leilao leilao;
+    private Leilao leilao = new Leilao("Leilao");
 
     public static LeilaoBuilder init() {
         return new LeilaoBuilder();

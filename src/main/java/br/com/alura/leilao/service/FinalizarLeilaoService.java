@@ -1,5 +1,7 @@
 package br.com.alura.leilao.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ public class FinalizarLeilaoService {
 	}
 
 	private Lance maiorLanceDadoNoLeilao(Leilao leilao) {
-		List<Lance> lancesDoLeilao = leilao.getLances();
+		List<Lance> lancesDoLeilao = new ArrayList<>(leilao.getLances());
 		lancesDoLeilao.sort((lance1, lance2) -> lance2.getValor().compareTo(lance1.getValor()));
 		return lancesDoLeilao.get(0);
 	}
