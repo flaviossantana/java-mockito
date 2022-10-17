@@ -31,29 +31,27 @@ class FinalizarLeilaoServiceTest {
     @Test
     void deveriaFinalizarUmLeilao() {
 
-        List<Leilao> leiloes = leilaoDao.buscarLeiloesExpirados();
+        List<Leilao> leiloes = criarLeilaoComLances();
 
-        Mockito.when(leiloes)
-                .thenReturn(criarLeilaoComLances());
+        Mockito.when(this.leilaoDao.buscarLeiloesExpirados())
+                .thenReturn(leiloes);
 
         this.service.finalizarLeiloesExpirados();
 
         Optional<Leilao> leilaoOptional = leiloes.stream().findFirst();
 
-        if(leilaoOptional.isPresent()){
-            Leilao leilao = leilaoOptional.get();
-
-            Assertions.assertTrue(leilao.isFechado());
-            Assertions.assertEquals(leilao.getLanceVencedor().getValor(), BigDecimal.valueOf(900.0));
-
-            Mockito.verify(leilaoDao).salvar(leilao);
+        if (!leilaoOptional.isPresent()) {
+            Assertions.fail("Não existe leilão");
         }
 
 
+        Leilao leilao = leilaoOptional.get();
 
-        // cenario
-        // acao
-        // validacao
+        Assertions.assertTrue(leilao.isFechado());
+        Assertions.assertEquals(leilao.getLanceVencedor().getValor(), BigDecimal.valueOf(900.0));
+
+        Mockito.verify(leilaoDao).salvar(leilao);
+
     }
 
     private List<Leilao> criarLeilaoComLances() {
