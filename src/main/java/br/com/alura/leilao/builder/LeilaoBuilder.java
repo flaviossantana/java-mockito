@@ -32,4 +32,16 @@ public class LeilaoBuilder {
     public Leilao criar() {
         return this.leilao;
     }
+
+    public LeilaoBuilder fechado() {
+        this.leilao.fechar();
+        return this;
+    }
+
+    public LeilaoBuilder lanceVencedor(String nomeUsuario, double valor) {
+        Lance lance = new Lance(new Usuario(nomeUsuario), BigDecimal.valueOf(valor));
+        this.leilao.propoe(lance);
+        this.leilao.setLanceVencedor(lance);
+        return this;
+    }
 }
