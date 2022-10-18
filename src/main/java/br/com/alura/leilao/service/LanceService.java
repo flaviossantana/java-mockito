@@ -14,14 +14,16 @@ import br.com.alura.leilao.model.Usuario;
 @Service
 public class LanceService {
 
-	@Autowired
 	private LanceDao lances;
-
-	@Autowired
 	private UsuarioDao usuarios;
+	private LeilaoDao leiloes;
 
 	@Autowired
-	private LeilaoDao leiloes;
+	public LanceService(LanceDao lances, UsuarioDao usuarios, LeilaoDao leiloes) {
+		this.lances = lances;
+		this.usuarios = usuarios;
+		this.leiloes = leiloes;
+	}
 
 	public boolean propoeLance(NovoLanceDto lanceDto, String nomeUsuario) {
 
